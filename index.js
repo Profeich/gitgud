@@ -16,22 +16,19 @@ const inquirer    = require('inquirer');
 program
   .version(version, '-v, --vers', 'output the current version');
 
-
 program
   .command('s')
   .description('start git commands')
   .action((source, destination) => {
     //generating the commands
     const data = {q:[]};
-    _.keys(q).forEach((item) => {if(/q3/.exec(item)) data.q.push(item.split('q3')[1]);});
     initQuestion1(data);
   });
 
 /**
 *Programm to start the questioning about git commands
-*@param {object} data the commands generated from the module
 **/
-async function initQuestion1(data){
+async function initQuestion1(){
   function build(answers){
     if(answers.force) answers.force = '-f'; else answers.force = '';
     if(answers.argv) answers.argv = `${answers.argv}`; else answers.argv = '';
@@ -67,13 +64,15 @@ async function initQuestion1(data){
     console.log(l);
   }
   const answers = {};
+  const items = [];
+  _.keys(q).forEach((item) => {if(/q3/.exec(item)) items.push(item.split('q3')[1]);});
   try{
-    _.merge(answers, await inquirer.prompt(q.q1(data.q)));
-    _.merge(answers, await inquirer.prompt(q[`q3${answers.command}`](data)));
+    _.merge(answers, await inquirer.prompt(q.q1(items)));
+    _.merge(answers, await inquirer.prompt(q[`q3${answers.command}`]()));
   }catch(ex){console.error(ex);}
   const t = build(answers);
-  console.log(chalk`{blue >>>}` + ' ' + chalk`{blue ${t}}`);
   exec(t, (error, stdout, stderr) => {
+    console.log(chalk`{blue >>>}` + ' ' + chalk`{blue ${t}}`);
     if (stderr)printErr(stderr);
     if (stdout)printRes(stdout);
   });
