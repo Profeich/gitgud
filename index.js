@@ -27,29 +27,6 @@ program
     initQuestion1(data);
   });
 
-program
-  .command('t')
-  .description('start test commands')
-  .action((source, destination) => {
-    console.log('testing ground');
-    async function getR() {
-      const { stdout, stderr } = await exec('ls');
-      return stdout;
-    }
-  });
-
-program
-  .command('update')
-  .description('updates')
-  .action((source, destination) => {
-    inquirer.prompt(q.q2)
-    .then(answer => {
-      console.log(answer);
-    }).catch(reason =>{
-      console.error(reason);
-    });
-  });
-
 /**
 *Programm to start the questioning about git commands
 *@param {object} data the commands generated from the module
