@@ -11,8 +11,6 @@ const version     = require('./package.json').version;
 
 //Require init
 const inquirer    = require('inquirer');
-inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'));
-inquirer.registerPrompt('file-tree-selection', require('inquirer-file-tree-selection-prompt'));
 
 //Commander init
 program
