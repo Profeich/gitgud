@@ -1,0 +1,20 @@
+{
+  "name": "gitgud",
+  "version": "1.0.0",
+  "description": "A small cli programm for BASIC git commands",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Philipp Mirbaha",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "commander": "^4.0.0",
+    "conf": "^6.2.0",
+    "inquirer": "^7.0.0",
+    "inquirer-file-tree-selection-prompt": "^1.0.2",
+    "inquirer-fuzzy-path": "^2.1.0",
+    "lodash": "^4.17.15"
+  }
+}
