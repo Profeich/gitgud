@@ -1,8 +1,10 @@
 {
-  "name": "gitgud",
+  "name": "gitgud-cli",
   "version": "1.0.0",
   "description": "A small cli programm for BASIC git commands",
   "main": "index.js",
+  "preferGlobal": true,
+  "bin": { "gg": "index.js" },
   "scripts": {
     "start": "node index.js"
   },

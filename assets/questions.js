@@ -3,21 +3,6 @@ const fs          = require('fs');
 const _           = require('lodash');
 const { execSync }    = require('child_process');
 
-/*
-module.exports.q1 = [{
-      type: 'list',
-      name: 'command',
-      message: 'What git command do you need?',
-      choices: [
-        'pull',
-        'push',
-        'fetch',
-        'init',
-        'commit'
-      ]
-    }];
-*/
-
 module.exports.q1 = (items) => {
   return [{
         type: 'list',
