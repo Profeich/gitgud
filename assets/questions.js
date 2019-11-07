@@ -243,6 +243,34 @@ module.exports.q3Status = () => [
       }
     ];
 
+module.exports.q3Status = () => [
+  {
+      type: 'checkbox',
+      name: 'options',
+      message: 'do you whant any options?',
+      choices: [
+        argList.v,
+        argList.s,
+        argList.b
+      ]
+      },{
+        when: (response) => {
+          if(_.includes(response.options, '-b')) return true;
+        },
+        name: 'text',
+        type: 'list',
+        message: 'Pls specify remote!',
+        choices: remotes,
+        filter(response){
+          return new Promise((resolve, reject) =>{
+            //resolve(`-m "${response}"`);
+            resolve({'-b':response});
+          });
+        }
+      }
+    ];
+
+
 module.exports.qForce = [
   {
       type: 'confirm',

@@ -1,6 +1,6 @@
 {
   "name": "gitgud-cli",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "A small cli programm for BASIC git commands",
   "main": "index.js",
   "preferGlobal": true,
