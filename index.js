@@ -11,10 +11,12 @@ const version     = require('./package.json').version;
 
 //Require init
 const inquirer    = require('inquirer');
+inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'));
 
 //Commander init
 program
   .version(version, '-v, --vers', 'output the current version');
+
 
 program
   .command('s')
@@ -24,6 +26,26 @@ program
     const data = {q:[]};
     initQuestion1(data);
   });
+
+program
+  .command('t')
+  .description('start test commands')
+  .action((source, destination) => {
+    //generating the commands
+    let items = [];
+    execSync('git branch -l').toString().split('\n').slice(0,-1 ).forEach((item) => {
+      //if(!item.split('*')[0])items.push(item.split('*')[1].slice(1,item.length));
+      //else items.push(item.slice(1,item.length));
+      let req = /\w/;
+      items.push(req.exec(item));
+    });
+    //const remotes = execSync('git branch -l').toString().split('\n').slice(0,-1).forEach(regg);
+    console.log(items);
+  });
+
+function regg(item){
+  if(item[0]==='*')item=item.slice(1,-1);
+}
 
 /**
 *Programm to start the questioning about git commands
@@ -67,8 +89,8 @@ async function initQuestion1(){
   const items = [];
   _.keys(q).forEach((item) => {if(/q3/.exec(item)) items.push(item.split('q3')[1]);});
   try{
-    _.merge(answers, await inquirer.prompt(q.q1(items)));
-    _.merge(answers, await inquirer.prompt(q[`q3${answers.command}`]()));
+    _.merge(answers, await inquirer.prompt(q.q1Sugg(items)));
+    _.merge(answers, await inquirer.prompt(q[`q3${answers['command']}`]()));
   }catch(ex){console.error(ex);}
   const t = build(answers);
   exec(t, (error, stdout, stderr) => {

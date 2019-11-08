@@ -8,13 +8,17 @@ const argList = {
   progress: { value:'--progress', name:'--progress, Show progression while working'},
   b: { value:'-b', name:'-b, Specific branch'},
   m: { value:'-m', name:'-m, Message to be used'},
+  n: { value:'-n', name:'-n, No checkout'},
   q: { value:'-q', name:'-q, Less Output'},
   all: { value:'--all', name:'--all, Send all references'},
   d: { value:'-d', name:'-d, Delete all references'},
   u: { value:'-u', name:'-u, Set upstream for pull/status'},
   f: { value:'-f', name:'-f, Force the command despite errors/warnings'},
   s: { value:'-s', name:'-s, Show output in a shorter format'},
+  nohardlinks: { value:'--no-hardlinks', name:'--no-hardlinks, Don´t use local links'},
   p: { value:'-p', name:'-p, Remove Remote-Tracking-Branches'},
+  l: { value:'-l', name:'-l, List all remotes/branches'},
+  lC: { value:'-l', name:'-l, Clone from local Repo'},
   bare: { value:'--bare', name:'--bare, Create a bare-Repository'},
   addR: { value:'add', name:'add, Add a new remote'},
   remR: { value:'remove', name:'remove, Remove an old remote'},
@@ -22,7 +26,6 @@ const argList = {
   showR: { value:'show', name:'show, Show all remotes'},
   getuR: { value:'get-url', name:'get-url, Show the url of a specific remote'},
 };
-const remotes = execSync('git remote show').toString().split('\n').slice(0,-1);
 
 module.exports.q1 = (items) => {
   return [{
@@ -31,6 +34,31 @@ module.exports.q1 = (items) => {
         message: 'What git command do you need?',
         choices: items
       }];
+};
+
+module.exports.q1Sugg = (items) => {
+  function searchItems(answers, input) {
+    input = input || '';
+    return new Promise((resolve, reject) => {
+      const t = [];
+      items.forEach((item) =>{
+        if(_.includes(item.toLowerCase(), input.toLowerCase())) t.push(item);
+      });
+      resolve(t);
+    });
+  }
+
+  return [{
+      type: 'autocomplete',
+      name: 'command',
+      suggestOnly: false,
+      message: 'What git command do you need?',
+      source: searchItems,
+      pageSize: 4,
+      validate: function(val) {
+        return val ? true : 'Type something!';
+      },
+    }];
 };
 
 module.exports.q3Pull = () => [
@@ -139,7 +167,7 @@ module.exports.q3Add = () => {
 };
 
 module.exports.q3Remote = () => {
-  //const remotes = execSync('git remote show').toString().split('\n').slice(0,-1);
+  let remotes = execSync('git remote show').toString().split('\n').slice(0,-1);
   return [{
         type: 'list',
         name: 'options',
@@ -216,7 +244,9 @@ module.exports.q3Remote = () => {
       }];
 };
 
-module.exports.q3Status = () => [
+module.exports.q3Status = () => {
+  const remotes = execSync('git remote show').toString().split('\n').slice(0,-1);
+  return [
   {
       type: 'checkbox',
       name: 'options',
@@ -238,37 +268,63 @@ module.exports.q3Status = () => [
           return new Promise((resolve, reject) =>{
             //resolve(`-m "${response}"`);
             resolve({'-b':response});
+          });
+        }
+      }
+    ];
+  };
+
+module.exports.q3Branch = () => [
+  {
+      type: 'checkbox',
+      name: 'options',
+      message: 'do you whant any options?',
+      choices: [
+        argList.v,
+        argList.q,
+        argList.u,
+        argList.l,
+      ]
+      },{
+        when: (response) => {
+          if(_.includes(response.options, '-u')) return true;
+        },
+        name: 'text',
+        type: 'input',
+        message: 'Pls specify: <origin> <master>',
+        filter(response){
+          return new Promise((resolve, reject) =>{
+            //resolve(`-m "${response}"`);
+            resolve({'-u': `${response}`});
           });
         }
       }
     ];
 
-module.exports.q3Status = () => [
-  {
-      type: 'checkbox',
-      name: 'options',
-      message: 'do you whant any options?',
-      choices: [
-        argList.v,
-        argList.s,
-        argList.b
-      ]
-      },{
-        when: (response) => {
-          if(_.includes(response.options, '-b')) return true;
-        },
-        name: 'text',
-        type: 'list',
-        message: 'Pls specify remote!',
-        choices: remotes,
-        filter(response){
-          return new Promise((resolve, reject) =>{
-            //resolve(`-m "${response}"`);
-            resolve({'-b':response});
-          });
+  module.exports.q3Clone = () => [
+    {
+        type: 'checkbox',
+        name: 'options',
+        message: 'do you whant any options?',
+        choices: [
+          argList.v,
+          argList.q,
+          argList.progress,
+          argList.lC,
+          argList.nohardlinks,
+        ]
+        },{
+          name: 'argv',
+          type: 'input',
+          message: 'Pls specify: <repo> [<directory>]!',
+          filter(response){
+            return new Promise((resolve, reject) =>{
+              //resolve(`-m "${response}"`);
+              resolve([response]);
+            });
+          }
         }
-      }
-    ];
+      ];
 
 
 module.exports.qForce = [
